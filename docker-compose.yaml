@@ -1,0 +1,48 @@
+
+services:
+    # Databases
+    users-db:
+        image: postgres
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+            POSTGRES_DB: "users"
+        ports:
+            - "5430:5432"
+        volumes:
+            - /var/lib/postgresql/data
+        networks:
+            - users-net
+
+    alarms-db:
+        image: postgres
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+            POSTGRES_DB: "alarms"
+        networks:
+            - users-net
+        volumes:
+            - /var/lib/postgresql/data
+
+    users-app:
+        build: 
+            context: ./users
+        volumes:
+            - ./users/:/app
+        networks:
+            - users-net
+        ports:
+            - "801:8000"
+
+    # Exposed API Gateway
+    api-gateway:
+        build: 
+            context: ./api-gateway
+        networks:
+            - users-net
+        ports:
+            - "8000:80"
+
+networks:
+    users-net:
