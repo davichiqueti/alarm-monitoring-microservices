@@ -10,9 +10,16 @@ services = {
 
 
 async def forward_request(service_url: str, method: str, path: str, body=None, headers=None):
+    if not path.endswith("/"):
+        path += "/"
+    url = f"{service_url}{path}?format=json"
     async with httpx.AsyncClient() as client:
-        url = f"{service_url}{path}?format=json"
-        response = await client.request(method, url, json=body, headers=headers)
+        response = await client.request(
+            method,
+            url,
+            json=body,
+            headers=headers,
+        )
         return response
 
 
