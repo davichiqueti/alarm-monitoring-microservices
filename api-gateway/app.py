@@ -1,21 +1,34 @@
-from fastapi import FastAPI, APIRouter, Request, Response
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 import httpx
 
 
 app = FastAPI()
-users_router = APIRouter(prefix="/api/users-app", tags=["users"])
+services = {
+    "users-app": "http://users-app:8000",
+}
 
-@users_router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def proxy_users(request: Request, path: str):
-    url = f"http://users-app:8000/{path}"
+
+async def forward_request(service_url: str, method: str, path: str, body=None, headers=None):
     async with httpx.AsyncClient() as client:
-        resp = await client.request(
-            method=request.method,
-            url=url,
-            headers=dict(request.headers),
-            content=await request.body(),
-            params=dict(request.query_params)
-        )
-    return Response(content=resp.content, status_code=resp.status_code, headers=dict(resp.headers))
+        url = f"{service_url}{path}?format=json"
+        response = await client.request(method, url, json=body, headers=headers)
+        return response
 
-app.include_router(users_router)
+
+@app.api_route("/{service}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def gateway(service: str, path: str, request: Request):
+    if service not in services:
+        raise HTTPException(status_code=404, detail="Service not found")
+
+    service_url = services[service]
+    body = await request.json() if request.method in ["POST", "PUT", "PATCH"] else None
+    headers = dict(request.headers)
+    response = await forward_request(service_url, request.method, f"/{path}", body, headers)
+
+    try:
+        content = response.json()
+    except Exception:
+        content = {"detail": response.text}
+
+    return JSONResponse(status_code=response.status_code, content=content)
