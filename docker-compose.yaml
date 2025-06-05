@@ -10,7 +10,7 @@ services:
         ports:
             - "5430:5432"
         volumes:
-            - /var/lib/postgresql/data
+            - users-db-data:/var/lib/postgresql/data
         networks:
             - users-net
 
@@ -23,7 +23,7 @@ services:
         networks:
             - users-net
         volumes:
-            - /var/lib/postgresql/data
+            - alarms-db-data:/var/lib/postgresql/data
 
     users-app:
         build: 
@@ -46,3 +46,8 @@ services:
 
 networks:
     users-net:
+
+
+volumes:
+    users-db-data:
+    alarms-db-data:
