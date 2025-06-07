@@ -32,13 +32,13 @@ async def gateway(service: str, path: str, request: Request):
         raise HTTPException(status_code=404, detail="Service not found")
 
     body = None
-    if request.method in ["POST", "PUT", "PATCH"]:
+    headers = dict(request.headers)
+    if "application/json" in headers.get("content-type", ""):
         try:
             body = await request.json()
         except:
             JSONResponse({"detail": "Could not parse body JSON"}, status_code=400)
 
-    headers = dict(request.headers)
     response = await forward_request(service_url, request.method, f"/{path}", body, headers)
 
     try:
