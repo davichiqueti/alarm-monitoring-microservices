@@ -21,32 +21,46 @@ services:
             POSTGRES_PASSWORD: "password"
             POSTGRES_DB: "alarms"
         networks:
-            - users-net
+            - alarms-net
         volumes:
             - alarms-db-data:/var/lib/postgresql/data
 
+    # Apps
     users-app:
         build: 
             context: ./users
         volumes:
             - ./users/:/app
         networks:
+            - backend-net
             - users-net
         ports:
-            - "801:8000"
+            - "8000:8000"
+
+    alarms-app:
+        build: 
+            context: ./alarms
+        volumes:
+            - ./alarms/:/app
+        networks:
+            - backend-net
+            - alarms-net
+        ports:
+            - "8001:8000"
 
     # Exposed API Gateway
     api-gateway:
         build: 
             context: ./api-gateway
-        networks:
-            - users-net
         ports:
-            - "8000:80"
+            - "803:80"
+        networks:
+            - backend-net
 
 networks:
+    backend-net:
     users-net:
-
+    alarms-net:
 
 volumes:
     users-db-data:

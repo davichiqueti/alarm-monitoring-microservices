@@ -5,10 +5,10 @@ from core import views
 
 
 router = routers.DefaultRouter()
-router.register(r'users', viewset=views.UserViewSet, basename="Users")
-
+router.register(r'alarms', viewset=views.AlarmViewSet, basename="Alarms")
+router.register(r'alarms-users', viewset=views.AlarmUserViewSet, basename="Alarms Users")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include(router.urls))
 ]
