@@ -34,8 +34,10 @@ services:
     logs-db:
         image: mongo:4.0.4
         environment:
-            - MONGO_INITDB_ROOT_USERNAME=user
-            - MONGO_INITDB_ROOT_PASSWORD=password
+            MONGO_INITDB_ROOT_USERNAME: user
+            MONGO_INITDB_ROOT_PASSWORD: password
+        networks:
+            - logs-net
         volumes:
             - logs-db-data:/data/db
 
@@ -70,11 +72,19 @@ services:
         build: 
             context: ./activation-service
 
-    # Services
     notification-service:
         <<: *commom-services-config
         build: 
             context: ./notification-service
+
+    logging-service:
+        <<: *commom-services-config
+        build: 
+            context: ./logging-service
+        environment:
+            MONGO_CONN_STRING: mongodb://user:password@logs-db:27017/
+        networks:
+            - logs-net
 
     # Exposed API Gateway
     api-gateway:
@@ -88,6 +98,7 @@ networks:
     backend-net:
     users-net:
     alarms-net:
+    logs-net:
 
 volumes:
     users-db-data:
