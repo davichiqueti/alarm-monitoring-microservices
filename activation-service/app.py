@@ -2,18 +2,21 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 import httpx
 from pydantic import BaseModel
-
+import os
 
 app = FastAPI()
+ALARMS_SERVICE_URL = os.environ["alarms-app-url"]
 
-class ActivationStatus(BaseModel):
-    active: bool
+
+class AlarmActivationStatus(BaseModel):
+    alarm: int
+    status: bool
 
 
 @app.api_route("/api/", methods=["GET"])
 async def get_alarms_activation_status():
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"http://alarms-app:8000/api/alarms/")
+        res = await client.get(f"{ALARMS_SERVICE_URL}/alarms/")
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=res.text)
 
@@ -22,12 +25,12 @@ async def get_alarms_activation_status():
     return JSONResponse({"alarms-status": alarms_status})
 
 
-@app.api_route("/api/{alarm_id}/", methods=["POST"])
-async def update_alarm_activation_status(alarm_id: int, status: ActivationStatus):
+@app.api_route("/api/status/", methods=["POST"])
+async def set_activation_status(activation_status: AlarmActivationStatus):
     async with httpx.AsyncClient() as client:
         res = await client.patch(
-            url=f"http://alarms-app:8000/api/alarms/{alarm_id}/",
-            json={"active": status.active}
+            url=f"{ALARMS_SERVICE_URL}/alarms/{activation_status.alarm}/",
+            json={"active": activation_status.status}
         )
     if res.status_code != 200:
         return JSONResponse(status_code=res.status_code, content=res.json())

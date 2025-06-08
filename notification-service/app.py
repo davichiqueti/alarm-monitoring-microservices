@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from core import models, tasks
+import os
 import httpx
 
 
@@ -11,7 +12,7 @@ app = FastAPI()
 async def notify_alarm_event(alarm_notification: models.AlarmNotification):
     alarm_id = alarm_notification.alarm
     async with httpx.AsyncClient() as client:
-        res = await client.get(f"http://alarms-app:8000/api/alarms/{alarm_id}/")
+        res = await client.get(f"{os.environ['alarms-app-url']}/alarms/{alarm_id}/")
         res_json: dict = res.json()
     if res.status_code != 200:
         return JSONResponse(status_code=res.status_code, content=res_json)

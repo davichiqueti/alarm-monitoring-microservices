@@ -1,3 +1,11 @@
+x-services-config: &commom-services-config
+    networks:
+        - backend-net
+    environment:
+        users-app-url: http://users-app:8000/api
+        alarms-app-url: http://alarms-app:8000/api
+        activation-service-url: http://activation-service:8000/api
+        notification-service-url: http://notification-service:8000/api
 
 services:
     # Databases
@@ -7,8 +15,6 @@ services:
             POSTGRES_USER: "postgres"
             POSTGRES_PASSWORD: "password"
             POSTGRES_DB: "users"
-        ports:
-            - "5430:5432"
         volumes:
             - users-db-data:/var/lib/postgresql/data
         networks:
@@ -27,6 +33,7 @@ services:
 
     # Apps
     users-app:
+        <<: *commom-services-config
         build: 
             context: ./users
         volumes:
@@ -38,6 +45,7 @@ services:
             - "8000:8000"
 
     alarms-app:
+        <<: *commom-services-config
         build: 
             context: ./alarms
         volumes:
@@ -50,32 +58,23 @@ services:
 
     # Services
     activation-service:
+        <<: *commom-services-config
         build: 
             context: ./activation-service
-        volumes:
-            - ./activation-service/:/app
-        networks:
-            - backend-net
-        ports:
-            - "8002:8000"
 
     # Services
     notification-service:
+        <<: *commom-services-config
         build: 
             context: ./notification-service
-        volumes:
-            - ./notification-service/:/app
-        networks:
-            - backend-net
 
     # Exposed API Gateway
     api-gateway:
+        <<: *commom-services-config
         build: 
             context: ./api-gateway
         ports:
             - "803:80"
-        networks:
-            - backend-net
 
 networks:
     backend-net:

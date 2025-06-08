@@ -2,15 +2,16 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 import httpx
 from requests.structures import CaseInsensitiveDict
+import os
 
 
 app = FastAPI()
 ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
 SERVICES = {
-    "users-app": "http://users-app:8000/api",
-    "alarms-app": "http://alarms-app:8000/api",
-    "activation-service": "http://activation-service:8000/api",
-    "notification-service": "http://notification-service:8000/api"
+    "users-app": os.environ["users-app-url"],
+    "alarms-app": os.environ["alarms-app-url"],
+    "activation-service": os.environ["activation-service-url"],
+    "notification-service": os.environ["notification-service-url"],
 }
 
 
