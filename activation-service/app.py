@@ -32,4 +32,4 @@ async def update_alarm_activation_status(alarm_id: int, status: ActivationStatus
     if res.status_code != 200:
         return JSONResponse(status_code=res.status_code, content=res.json())
 
-    return JSONResponse({"detail": {"message": "Alarm activation status updated successfully"}})
+    return JSONResponse({"detail": "Alarm activation status updated successfully"})
