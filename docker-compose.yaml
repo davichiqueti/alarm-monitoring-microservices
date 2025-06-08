@@ -48,6 +48,16 @@ services:
         ports:
             - "8001:8000"
 
+    activation-service:
+        build: 
+            context: ./activation-service
+        volumes:
+            - ./activation-service/:/app
+        networks:
+            - backend-net
+        ports:
+            - "8002:8000"
+
     # Exposed API Gateway
     api-gateway:
         build: 

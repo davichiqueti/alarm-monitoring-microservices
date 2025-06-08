@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-n1)x%7r2lw#c%t@#ck-^sq5299)m&zo-es=4ob9a*e92ecslny
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['api-gateway', 'localhost']
+# Allowing all since APP is only acessible in the backend network
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

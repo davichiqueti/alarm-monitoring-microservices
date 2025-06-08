@@ -5,7 +5,7 @@ from rest_framework import serializers
 class AlarmUserSerializer(serializers.ModelSerializer):
     class Meta():
         model = models.AlarmUser
-        fields = '__all__'
+        exclude = ['pk']
 
 
 class AlarmSerializer(serializers.ModelSerializer):
