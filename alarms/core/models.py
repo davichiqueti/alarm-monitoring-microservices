@@ -42,5 +42,5 @@ class AlarmUser(models.Model):
         super().save(**kwargs) 
 
     def check_user(self, user_id: int) -> bool:
-        res = requests.get(f"{os.environ['users-app-url']}/users/{user_id}/")
+        res = requests.get(f"{os.environ['USERS_APP_URL']}/users/{user_id}/")
         return res.status_code == 200

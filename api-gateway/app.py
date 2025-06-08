@@ -8,10 +8,9 @@ import os
 app = FastAPI()
 ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
 SERVICES = {
-    "users-app": os.environ["users-app-url"],
-    "alarms-app": os.environ["alarms-app-url"],
-    "activation-service": os.environ["activation-service-url"],
-    "notification-service": os.environ["notification-service-url"],
+    "users-app": os.environ["USERS_APP_URL"],
+    "alarms-app": os.environ["ALARMS_APP_URL"],
+    "activation-service": os.environ["ACTIVATION_SERVICE_URL"],
 }
 
 

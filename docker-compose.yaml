@@ -2,10 +2,10 @@ x-services-config: &commom-services-config
     networks:
         - backend-net
     environment:
-        users-app-url: http://users-app:8000/api
-        alarms-app-url: http://alarms-app:8000/api
-        activation-service-url: http://activation-service:8000/api
-        notification-service-url: http://notification-service:8000/api
+        USERS_APP_URL: http://users-app:8000/api
+        ALARMS_APP_URL: http://alarms-app:8000/api
+        ACTIVATION_SERVICE_URL: http://activation-service:8000/api
+        NOTIFICATION_SERVICE_URL: http://notification-service:8000/api
 
 services:
     # Databases
@@ -30,6 +30,14 @@ services:
             - alarms-net
         volumes:
             - alarms-db-data:/var/lib/postgresql/data
+
+    logs-db:
+        image: mongodb/mongodb-comunity-server:6.0-ubi8
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=password
+        volumes:
+            - logs-db-data:/data/db
 
     # Apps
     users-app:
@@ -84,3 +92,4 @@ networks:
 volumes:
     users-db-data:
     alarms-db-data:
+    logs-db-data:
