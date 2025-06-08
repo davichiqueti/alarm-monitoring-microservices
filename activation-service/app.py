@@ -30,6 +30,6 @@ async def update_alarm_activation_status(alarm_id: int, status: ActivationStatus
             json={"active": status.active}
         )
     if res.status_code != 200:
-        raise HTTPException(status_code=res.status_code, detail=res.text)
+        return JSONResponse(status_code=res.status_code, content=res.json())
 
     return JSONResponse({"detail": {"message": "Alarm activation status updated successfully"}})
