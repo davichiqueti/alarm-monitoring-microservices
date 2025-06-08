@@ -12,12 +12,24 @@ class AlarmViewSet(viewsets.ModelViewSet):
         old_obj = self.get_object()
         updated_obj = serializer.save()
         if old_obj.active != updated_obj.active:
-            notification_type = "activated" if updated_obj.active else "deactivated"
+            activation_status = "activated" if updated_obj.active else "deactivated"
+            # Logging activation status changes
+            requests.post(
+                url=f"{os.environ['LOGGING_SERVICE_URL']}/logs/",
+                json={
+                    "alarm": updated_obj.id,
+                    "service": "alarms-app",
+                    "detail": {
+                        "message": f"Alarm status changed to {activation_status}"
+                    }
+                }
+            )
+            # Calling notification service to notify linked users
             requests.post(
                 url=f"{os.environ['NOTIFICATION_SERVICE_URL']}/notify/",
                 json={
                     "alarm": updated_obj.id,
-                    "notification_type": notification_type
+                    "notification_type": activation_status
                 }
             )
 

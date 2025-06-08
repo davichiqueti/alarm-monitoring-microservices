@@ -6,6 +6,7 @@ x-services-config: &commom-services-config
         ALARMS_APP_URL: http://alarms-app:8000/api
         ACTIVATION_SERVICE_URL: http://activation-service:8000/api
         NOTIFICATION_SERVICE_URL: http://notification-service:8000/api
+        LOGGING_SERVICE_URL: http://logging-service:8000/api
 
 services:
     # Databases
@@ -84,6 +85,7 @@ services:
         environment:
             MONGO_CONN_STRING: mongodb://user:password@logs-db:27017/
         networks:
+            - backend-net
             - logs-net
 
     # Exposed API Gateway

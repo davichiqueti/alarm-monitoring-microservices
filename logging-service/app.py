@@ -13,7 +13,7 @@ alarm_logs_collection = mongo_client["logs"]["alarms"]
 
 class Log(BaseModel):
     ts: datetime = Field(default_factory=datetime.now)
-    alarm_id: int
+    alarm: int
     service: str
     detail: dict
 
