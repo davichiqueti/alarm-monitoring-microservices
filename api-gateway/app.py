@@ -10,6 +10,7 @@ SERVICES = {
     "users-app": "http://users-app:8000/api",
     "alarms-app": "http://alarms-app:8000/api",
     "activation-service": "http://activation-service:8000/api",
+    "notification-service": "http://notification-service:8000/api"
 }
 
 
@@ -18,7 +19,6 @@ async def forward_request(service_url: str, method: str, path: str, body=None, h
     if not path.endswith("/"):
         path += "/"
     url = f"{service_url}{path}"
-    headers = headers or {}
     if headers:
         headers = CaseInsensitiveDict(headers)
     else:

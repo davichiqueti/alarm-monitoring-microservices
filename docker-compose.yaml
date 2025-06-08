@@ -48,6 +48,7 @@ services:
         ports:
             - "8001:8000"
 
+    # Services
     activation-service:
         build: 
             context: ./activation-service
@@ -57,6 +58,15 @@ services:
             - backend-net
         ports:
             - "8002:8000"
+
+    # Services
+    notification-service:
+        build: 
+            context: ./notification-service
+        volumes:
+            - ./notification-service/:/app
+        networks:
+            - backend-net
 
     # Exposed API Gateway
     api-gateway:
