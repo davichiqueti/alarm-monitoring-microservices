@@ -34,7 +34,7 @@ async def forward_request(service_url: str, method: str, path: str, body=None, h
         return await client.request(method, url, json=body, headers=headers)
 
 
-@app.api_route("/{service}/{path:path}", methods=ALLOWED_METHODS)
+@app.api_route("/gateway/{service}/{path:path}", methods=ALLOWED_METHODS)
 async def gateway(service: str, path: str, request: Request):
     service_url = SERVICES.get(service)
     if not service_url:
