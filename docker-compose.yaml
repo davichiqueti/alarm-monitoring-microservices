@@ -32,7 +32,7 @@ services:
             - alarms-db-data:/var/lib/postgresql/data
 
     logs-db:
-        image: mongodb/mongodb-comunity-server:6.0-ubi8
+        image: mongo:4.0.4
         environment:
             - MONGO_INITDB_ROOT_USERNAME=user
             - MONGO_INITDB_ROOT_PASSWORD=password
