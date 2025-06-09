@@ -7,6 +7,7 @@ x-services-config: &commom-services-config
         ACTIVATION_SERVICE_URL: http://activation-service:8000/api
         NOTIFICATION_SERVICE_URL: http://notification-service:8000/api
         LOGGING_SERVICE_URL: http://logging-service:8000/api
+        TRIGGER_SERVICE: http://trigger-service:8000/api
 
 services:
     # Databases
@@ -77,6 +78,11 @@ services:
         <<: *commom-services-config
         build: 
             context: ./notification-service
+
+    trigger-service:
+        <<: *commom-services-config
+        build: 
+            context: ./trigger-service
 
     logging-service:
         <<: *commom-services-config

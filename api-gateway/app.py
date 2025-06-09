@@ -11,6 +11,7 @@ SERVICES = {
     "users-app": os.environ["USERS_APP_URL"],
     "alarms-app": os.environ["ALARMS_APP_URL"],
     "activation-service": os.environ["ACTIVATION_SERVICE_URL"],
+    "trigger-service": os.environ["TRIGGER_SERVICE"],
 }
 
 
