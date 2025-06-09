@@ -18,18 +18,26 @@ class Trigger(BaseModel):
 @app.api_route("/api/trigger/", methods=["POST"])
 async def trigger_alarm(trigger: Trigger):
     async with httpx.AsyncClient() as client:
-        # Checking if alarm exists and is active
+        # Checking if alarm exists, is active and the spot is valid
         alarm_res = await client.get(f"{os.environ['ALARMS_APP_URL']}/alarms/{trigger.alarm}/")
         if alarm_res.status_code != 200:
             return JSONResponse(
                 status_code=alarm_res.status_code,
                 content={"detail": f"Error fetching alarm data: {alarm_res.text}"}
             )
-        if not alarm_res.json()["active"]:
+        alarm_data: dict = alarm_res.json()
+        if not alarm_data["active"]:
             return JSONResponse(
                 status_code=406,
                 content={"detail": "The alarm is not active. So it can't be triggered"}
             )
+        if trigger.spot:
+            spots = [spot["name"] for spot in alarm_data["monitoring_spots"]]
+            if trigger.spot not in spots:
+                return JSONResponse(
+                    status_code=406,
+                    content={"detail": "Spot is not in the Alarm monitored spots."}
+                )
         # Log Trigger
         trigger_ts = trigger.ts.isoformat()
         log_res = await client.post(

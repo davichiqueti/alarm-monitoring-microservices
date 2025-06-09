@@ -1,5 +1,5 @@
 from rest_framework import viewsets, generics
-from core import serialiezers, models
+from core import serialiezers, models, filters
 import requests
 import os
 
@@ -7,6 +7,7 @@ import os
 class AlarmViewSet(viewsets.ModelViewSet):
     queryset = models.Alarm.objects.all()
     serializer_class = serialiezers.AlarmSerializer
+    filterset_class = filters.AlarmFilter
 
     def perform_update(self, serializer):
         old_obj = self.get_object()
@@ -36,6 +37,7 @@ class AlarmViewSet(viewsets.ModelViewSet):
 class AlarmUserViewSet(viewsets.ModelViewSet):
     queryset = models.AlarmUser.objects.all()
     serializer_class = serialiezers.AlarmUserSerializer
+    filterset_fields = ['alarm', 'user', 'permission', 'notify']
 
     def get_object(self):
         # Get the 'pk' from URL, which will be in format 'alarm_id-user_id'

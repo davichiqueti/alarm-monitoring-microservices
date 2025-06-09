@@ -15,7 +15,7 @@ SERVICES = {
 }
 
 
-async def forward_request(service_url: str, method: str, path: str, body=None, headers=None):
+async def forward_request(service_url: str, method: str, path: str, body=None, headers=None, params=None):
     # Avoiding redirect errors on URLs with no "/" on end
     if not path.endswith("/"):
         path += "/"
@@ -32,7 +32,7 @@ async def forward_request(service_url: str, method: str, path: str, body=None, h
     headers.pop("host", None)
     # Sending request
     async with httpx.AsyncClient() as client:
-        return await client.request(method, url, json=body, headers=headers)
+        return await client.request(method, url, json=body, headers=headers, params=params)
 
 
 @app.api_route("/gateway/{service}/{path:path}", methods=ALLOWED_METHODS)
@@ -48,7 +48,14 @@ async def gateway(service: str, path: str, request: Request):
         except:
             JSONResponse({"detail": "Could not parse body JSON"}, status_code=400)
 
-    response = await forward_request(service_url, request.method, f"/{path}", body, request.headers)
+    response = await forward_request(
+        service_url=service_url,
+        method=request.method,
+        path=f"/{path}",
+        body=body,
+        headers=request.headers,
+        params=dict(request.query_params)
+    )
 
     try:
         content = response.json()
