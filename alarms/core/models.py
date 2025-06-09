@@ -7,6 +7,12 @@ class Alarm(models.Model):
     active = models.BooleanField(default=False)
     title = models.TextField(max_length=60)
     description = models.TextField(max_length=120, null=True, blank=True)
+    location = models.TextField(max_length=60, null=False, blank=False)
+
+
+class MonitoringSpot(models.Model):
+    alarm = models.ForeignKey(Alarm, on_delete=models.CASCADE, related_name="monitoring_spots")
+    name = models.CharField(max_length=60)
 
 
 class AlarmUser(models.Model):
