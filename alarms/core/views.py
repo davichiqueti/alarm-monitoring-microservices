@@ -1,5 +1,5 @@
-from rest_framework import viewsets, generics
-from core import serialiezers, models, filters
+from rest_framework import viewsets, exceptions, generics
+from core import serialiezers, models, filters, utils
 import requests
 import os
 
@@ -47,3 +47,11 @@ class AlarmUserViewSet(viewsets.ModelViewSet):
             return self.queryset.get(alarm=alarm_id, user=user_id)
         except (ValueError, models.AlarmUser.DoesNotExist):
             raise generics.Http404
+
+    def perform_create(self, serializer):
+        # Check if the user exists in the User Application
+        user_id = serializer.validated_data['user']
+        if not utils.check_user(user_id):
+            raise exceptions.ValidationError(f"Could not find valid User with ID {user_id} on User Application.")
+        # Save the AlarmUser instance
+        serializer.save()

@@ -39,14 +39,3 @@ class AlarmUser(models.Model):
         choices=PermissionLevel.choices,
         default=PermissionLevel.VIEWER
     )
-
-    def save(self, **kwargs):
-        # TODO: Only check when user attribute changed
-        if not self.check_user(self.user):
-            raise IntegrityError(f"Could not find valid User with ID {self.user} on User Application.")
-        # Continues to normal flow.
-        super().save(**kwargs) 
-
-    def check_user(self, user_id: int) -> bool:
-        res = requests.get(f"{os.environ['USERS_APP_URL']}/users/{user_id}/")
-        return res.status_code == 200
