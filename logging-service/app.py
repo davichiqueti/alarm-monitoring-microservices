@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 from pymongo import MongoClient
 from datetime import datetime
@@ -18,7 +19,16 @@ class Log(BaseModel):
     detail: dict
 
 
-@app.api_route("/api/logs/", methods=["POST"])
-async def create_log(log: Log):
-    result = alarm_logs_collection.insert_one(log.model_dump())
-    return JSONResponse({"inserted_id": str(result.inserted_id)})
+@app.api_route("/api/logs/", methods=["POST", "GET"])
+async def create_log(request: Request):
+    if request.method == "POST":
+        log = Log(**await request.json())
+        result = alarm_logs_collection.insert_one(log.model_dump())
+        return JSONResponse({"inserted_id": str(result.inserted_id)})
+    elif request.method == "GET":
+        logs = []
+        for log in alarm_logs_collection.find():
+            log["_id"] = str(log["_id"])
+            logs.append(jsonable_encoder(log))
+        # Convert ObjectId to string for JSON serialization
+        return JSONResponse(logs)
